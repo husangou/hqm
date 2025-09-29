@@ -233,12 +233,31 @@ class OrderController extends Controller
         }
         $order->payment_id = $method;
         if (!$order->save()) abort(500, __('Request failed, please try again later'));
-        $result = $paymentService->pay([
-            'trade_no' => $tradeNo,
-            'total_amount' => isset($order->handling_amount) ? ($order->total_amount + $order->handling_amount) : $order->total_amount,
-            'user_id' => $order->user_id,
-            'stripe_token' => $request->input('token')
-        ]);
+        // $result = $paymentService->pay([
+        //     'trade_no' => $tradeNo,
+        //     'total_amount' => isset($order->handling_amount) ? ($order->total_amount + $order->handling_amount) : $order->total_amount,
+        //     'user_id' => $order->user_id,
+        //     'stripe_token' => $request->input('token')
+        // ]);
+// 获取 referer 信息
+$host = $request->getSchemeAndHttpHost();
+$referer = $request->header('referer');
+if ($referer) {
+    $refererParts = parse_url($referer);
+    if (isset($refererParts['scheme']) && isset($refererParts['host'])) {
+        $host = $refererParts['scheme'] . '://' . $refererParts['host'];
+        if (isset($refererParts['port'])) {
+            $host .= ':' . $refererParts['port'];
+        }
+    }
+}
+
+$result = $paymentService->pay([
+    'trade_no' => $tradeNo,
+    'total_amount' => isset($order->handling_amount) ? ($order->total_amount + $order->handling_amount) : $order->total_amount,
+    'user_id' => $order->user_id,
+    'stripe_token' => $request->input('token')
+], $host);
         return response([
             'type' => $result['type'],
             'data' => $result['data']
@@ -303,7 +322,7 @@ class OrderController extends Controller
 
     private function getbounus($total_amount) {
         $deposit_bounus = config('v2board.deposit_bounus', []);
-        if (empty($deposit_bounus) || $deposit_bounus[0] === null) {
+        if (empty($deposit_bounus)) {
             return 0;
         }
         $add = 0;
