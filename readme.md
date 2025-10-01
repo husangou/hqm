@@ -1,16 +1,14 @@
 <img src="https://avatars.githubusercontent.com/u/56885001?s=200&v=4" alt="logo" width="130" height="130" align="right"/>
 
-[![](https://img.shields.io/badge/TgChat-@UnOfficialV2board讨论-blue.svg)](https://t.me/unofficialV2board)
-
 ## 本分支支持的后端
  - [修改版V2bX](https://github.com/wyx2685/V2bX)
 
 
 ## 原版迁移步骤
 
-按以下步骤进行面板代码文件迁移：
+按以下步骤从xiao v2board无缝迁移，数据库无需任何改动：
 
-    git remote set-url origin https://github.com/wyx2685/v2board  
+    git remote set-url origin https://github.com/codeman857/v3board  
     git checkout master  
     ./update.sh  
 
@@ -23,6 +21,11 @@
     php artisan horizon:terminate
 
 最后进入后台重新保存主题： 主题配置-选择default主题-主题设置-确定保存
+
+合并xiao v2board有冲突？运行以下脚本手动解决冲突即可
+```shell
+    sh merge.sh
+```
 
 # **V2Board**
 
